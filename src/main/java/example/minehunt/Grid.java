@@ -1,4 +1,4 @@
-package org.demineur.minehunt;
+package example.minehunt;
 
 /**
  *
