@@ -6,43 +6,40 @@ package example.minehunt;
 public interface Grid {
 
     /**
-     * Renvoie le nombre de lignes.
-     *
-     * @return le nombre de lignes
+     * @return the count of lines
      */
     int getLines();
 
     /**
-     * Renvoie le nombre de colonnes.
-     *
-     * @return le nombre de colonnes
+     * @return the count of columns
      */
     int getColumns();
 
     /**
-     * Renvoie le nombre de mines.
      *
-     * @return le nombre de mines
+     * @return the count of mines on the grid
      */
     int getMineCount();
 
     /**
-     * Renvoie le nombre de mines que le joueur a localisées
+     * returns the count of cells the player has flagged as surely mined
      *
-     * @return le nombre de "Flags"
+     * @return the count of Flags
      */
     int getFlagCount();
 
-    /** Renvoie une référence sur une case
-     * @param position la position de la case voulue
-     * @return la case voulue, ou null si la position demandée est en dehors du champ (TODO: est-ce que l'usage est plutôt de lever une exception?)
+    /** returns a reference on a cell
+     * @param position the position of the desired cell
+     * @return the desired cell
+     * An IllegalArgumentException is raised if there is no cell with such a
+     * position (you should check getLines() and getColumns())
      */
-     Cell getCell(Position position);
+    Cell getCell(Position position) throws IllegalArgumentException;
 
-   /* TODO: méthode(s) pour donner l'état courant de la grille, c'est à dire
-    *       l'état de toutes les cases.
-    *       Cela peut servir pour déboguer le package "minehunt", et aussi
-    *       dans les cas où le joueur/client a besoin de redessiner la grille
-    */
+    /* TODO: méthode(s) pour donner l'état courant de la grille, c'est à dire
+     *       l'état de toutes les cases.
+     *       Cela peut servir pour déboguer le package "minehunt", et aussi
+     *       dans les cas où le joueur/client a besoin de redessiner la grille
+     */
 
 }

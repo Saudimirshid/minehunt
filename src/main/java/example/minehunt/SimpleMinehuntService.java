@@ -3,7 +3,7 @@ package example.minehunt;
 /**
  *
  */
-public interface MinehuntService {
+public final class SimpleMinehuntService implements MinehuntService {
 
     /**
      * create a new grid
@@ -16,7 +16,10 @@ public interface MinehuntService {
      * there are cells in the desired rectangular grid, or if any of the
      * parameters is negative
      */
-    Grid createGrid(int line, int col, int mineCount)
-         throws IllegalArgumentException;
+    public Grid createGrid(int line, int col, int mineCount)
+         throws IllegalArgumentException {
+
+        return new SimpleGrid(line, col, mineCount);
+    }
 
 }

@@ -31,7 +31,7 @@ import java.util.Set;
  */
 public final class CellActionResult {
 
-    public final enum Outcome {
+    public enum Outcome {
         BLOCKED, // cause: the cell is flagged
         CLEARED, // no mine in this cell, good job
         EXPLOSION // a mine has been triggered

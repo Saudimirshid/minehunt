@@ -3,33 +3,12 @@ package example.minehunt;
 /**
  *
  */
-public final class Cell {
+public interface Cell {
 
-    public final enum State {
+    public enum State {
         UNVISITED, // initial state
         FLAGGED,   // user is sure there is a mine
         VISITED    // cell visited
-    }
-
-    private final Grid grid;
-    private final Position position;
-    private final boolean mined;
-    private final int minesNearby; // count of mines in the 8 neighbours
-    private State state;
-
-    /* note by sapeur:
-     * I removed the other constructors which assumed that "mined is true =>
-     * do not bother with minesNearby and just set it to 0" and conversely that
-     * "I specify the quantity of minesNearby => mined is false".
-     * reason for that: the underlying implementation might be eased if the
-     * contents of these fields are independent.
-     */
-    Cell(Grid grid, Position position, boolean mined, int minesNearby) {
-        this.grid = grid;
-        this.position = position;
-        this.mined = mined;
-        this.minesNearby = minesNearby;
-        this.state = State.UNVISITED;
     }
 
     /**
@@ -37,21 +16,9 @@ public final class Cell {
      * (might be useful if the player has lost trace of the grid, or is playing
      *  on several grids at once)
      */
-    public Grid getGrid() {
-        return grid;
-    }
+    Grid getGrid();
 
-    public Position getPosition() {
-        return position;
-    }
-
-    boolean isMined() {
-        return mined;
-    }
-
-    int getMinesNearby() {
-        return minesNearby;
-    }
+    Position getPosition();
 
     /* question: why are the getters for "mined" and "minesNearby" not public?
      * answer: because we do not want to encourage cheating. To know the values
@@ -59,25 +26,25 @@ public final class Cell {
      * then read the contents of the CellActionResult object.
      */
 
-    public State getState() {
-        return state;
-    }
+    State getState();
 
     /**
-     * Le joueur a localisé une mine
+     * the player has located a mine
      *
-     * @return "false" si la case a déjà été visitée, "true" si le drapeau a
-     *         bien été mis (ou s'il y en avait déjà un. L'effet est le même)
+     * @return "false" if the cell has already been visited,
+     *         "true" if the cell has been flagged (or was flagged already,
+     *                the net effect is the same)
      */
-    public boolean setFlag();
+    boolean setFlag();
 
     /**
-     * Le joueur avait cru localiser une mine, mais change d'avis
+     * the player thought there was a mine there, but is changing minds
      *
-     * @return "false" si la case a déjà été visitée, "true" si le drapeau a
-     *         bien été ôté (ou s'il n'y en avait pas. L'effet est le même)
+     * @return "false" if the cell has already been visited,
+     *         "true" if the flag has been removed (or if there was no flag
+     *                already, the net effect is the same)
      */
-    public boolean unsetFlag();
+    boolean unsetFlag();
 
     /* question: where is the "isFlag" method?
      * answer: to know whether the cell is flagged or not, use "getState",
@@ -85,20 +52,20 @@ public final class Cell {
      */
 
     /**
-     * Le joueur visite la case.
+     * the player visits the cell.
      *
-     * Avec cette méthode, le contenu de l'attribut "affectedCells" doit être
-     * ignoré.
+     * with this method, you must ignore the contents of the "affectedCells"
+     * field from the object returned
      */
-    public CellActionResult visit();
+    CellActionResult visit();
 
     /**
-     * Le joueur visite la case, et si elle ne contient pas de mine alors le
-     * joueur demande à visiter toutes les cases alentours qui ne contiennent
-     * évidemment pas de mine (c'est à dire: en partant de la case qui vient
-     * d'être visitée, si une case a 0 mine autour d'elle alors visiter toutes
-     * les cases adjacentes et itérer).
+     * the player visits the cell.
+     * If this cell happens to be devoid of mine, and if no mine is detected
+     * in any of the 8 neighbouring cells, the player wants to proceed visiting
+     * all of those neighbours, and to iterate upon every newly visited cell
+     * until no more obvious action is possible
      */
-     public CellActionResult clearAround();
+    CellActionResult clearAround();
 
 }
