@@ -52,4 +52,12 @@ public final class CellActionResult {
         this.minesNearby = minesNearby;
         this.affectedCells = affectedCells;
     }
+
+    public int getMinesNearby() {
+        return minesNearby;
+    }
+
+    public Set<Cell> getAffectedCells() {
+        return affectedCells;
+    }
 }

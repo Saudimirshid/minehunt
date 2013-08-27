@@ -1,14 +1,11 @@
 package example.minehunt.client;
 
-import example.minehunt.Cell;
-import example.minehunt.DisplayCellResult;
 import example.minehunt.Grid;
-import example.minehunt.Position;
+import example.minehunt.MinehuntService;
+import example.minehunt.SimpleMinehuntService;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
-import java.util.Collections;
 
 /**
  *
@@ -23,22 +20,9 @@ public final class Minehunt extends Application {
     public void start(Stage primaryStage) throws Exception {
         final Stage stage = new Stage();
 
-        Scene scene = new Scene(new GridNode(new Grid() {
-            @Override
-            public int getLines() {
-                return 10;
-            }
-
-            @Override
-            public int getColumns() {
-                return 10;
-            }
-
-            @Override
-            public DisplayCellResult displayCell(Position position) {
-                return new DisplayCellResult(new Cell(position, 0), Collections.emptySet());
-            }
-        }));
+        final MinehuntService minehuntService = new SimpleMinehuntService();
+        final Grid grid = minehuntService.createGrid(10, 10, 8);
+        Scene scene = new Scene(new GridNode(grid));
         stage.setScene(scene);
 
         stage.setOnCloseRequest(windowEvent -> System.exit(0));
