@@ -53,6 +53,10 @@ public final class CellActionResult {
         this.affectedCells = affectedCells;
     }
 
+    public Outcome getOutcome() {
+        return outcome;
+    }
+
     public int getMinesNearby() {
         return minesNearby;
     }

@@ -2,8 +2,11 @@ package example.minehunt.client;
 
 import example.minehunt.Cell;
 import example.minehunt.CellActionResult;
+import example.minehunt.CellActionResult.Outcome;
 import example.minehunt.Position;
 import javafx.scene.Group;
+import javafx.scene.control.Button;
+import javafx.scene.control.PopupControl;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -29,7 +32,15 @@ public final class CellNode extends Group {
         addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             final Cell selectedCell = grid.getGrid().getCell(position);
             final CellActionResult result = selectedCell.visit();
-            showCell(selectedCell, result.getMinesNearby());
+            if (result.getOutcome() == Outcome.EXPLOSION) {
+                final PopupControl popup = new PopupControl();
+                popup.getScene().setRoot(new Button("Yoo loose (press escape)!"));
+                popup.show(CellNode.this, 0, 0);
+                popup.centerOnScreen();
+
+            } else {
+                showCell(selectedCell, result.getMinesNearby());
+            }
         });
     }
 
