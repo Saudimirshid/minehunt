@@ -26,6 +26,14 @@ public interface Cell {
      * then read the contents of the CellActionResult object.
      */
 
+    /* edit: the clearAround() method returns a Set of cells automatically
+     * visited. It is painful to revisit each one just to get the value of
+     * minesNearby.
+     * So, here is a getter for minesNearby. It raises an exception if the
+     * cell is not in the state VISITED.
+     */
+    int getMinesNearby() throws IllegalAccessException;
+
     State getState();
 
     /**

@@ -10,6 +10,8 @@ public final class SimpleGrid implements Grid {
     final int lines;
     final int cols;
     final int mineCount;
+    int unvisitedCount;
+    int explosionCount;
     int flagCount;
     final Cell[][] cells;
 
@@ -29,6 +31,8 @@ public final class SimpleGrid implements Grid {
         this.lines = line;
         this.cols = col;
         this.mineCount = mineCount;
+        this.unvisitedCount = lines * cols;
+        this.explosionCount = 0;
         this.flagCount = 0;
         this.cells = new Cell[lines][cols];
 
@@ -89,11 +93,64 @@ public final class SimpleGrid implements Grid {
 
 
     /**
+     * @return the count of cells on the grid.
+     * For a rectangular grid, it is lines * columns
+     */
+    public int getCellCount() {
+        return lines * cols;
+    }
+
+
+    /**
      *
      * @return the count of mines on the grid
      */
     public int getMineCount() {
         return mineCount;
+    }
+
+
+    /**
+     * @return the count of unvisited cells on the grid
+     * (including flagged ones).
+     */
+    public int getUnvisitedCellsCount() {
+        return unvisitedCount;
+    }
+
+
+    /**
+     * decrease by one the count of unvisited cells.
+     * NOTE: no check is done. To ensure consistency, this method
+     * must only be invoked by a Cell that has just been visited.
+     */
+    void decrUnvisitedCount() {
+        unvisitedCount--;
+    }
+
+
+    /**
+     * increase by one the count of explosions.
+     * NOTE: no check is done. To ensure consistency, this method
+     * must only be invoked by a Cell that has just exploded.
+     */
+    void incrExplosionCount() {
+        explosionCount++;
+    }
+
+
+    /**
+     * @return true if the game is won.
+     * The game is won if every unmined cell has been visited, and no mined
+     * cell has been visited.
+     * This method returns false if the game is lost or unfinished.
+     */
+    public boolean isGameWon() {
+        if (explosionCount > 0)
+            return false;
+        if (unvisitedCount == mineCount)
+            return true;
+        return false;
     }
 
 

@@ -47,7 +47,9 @@ public final class SimpleCell implements Cell {
     }
 
 
-    int getMinesNearby() {
+    public int getMinesNearby() throws IllegalAccessException {
+        if (state != State.VISITED)
+            throw new IllegalAccessException("cell is not visited");
         return minesNearby;
     }
 
@@ -144,6 +146,10 @@ public final class SimpleCell implements Cell {
                                        );
 
         state = State.VISITED;
+        grid.decrUnvisitedCount();
+
+        if (mined)
+            grid.incrExplosionCount();
 
         CellActionResult.Outcome outcome =
             ( mined ? CellActionResult.Outcome.EXPLOSION

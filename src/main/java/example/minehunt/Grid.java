@@ -16,10 +16,29 @@ public interface Grid {
     int getColumns();
 
     /**
-     *
+     * @return the count of cells on the grid.
+     * For a rectangular grid, it is lines * columns
+     */
+    int getCellCount();
+
+    /**
      * @return the count of mines on the grid
      */
     int getMineCount();
+
+    /**
+     * @return the count of unvisited cells on the grid
+     * (including flagged ones).
+     */
+    int getUnvisitedCellsCount();
+
+    /**
+     * @return true if the game is won.
+     * The game is won if every unmined cell has been visited, and no mined
+     * cell has been visited.
+     * This method returns false if the game is lost or unfinished.
+     */
+    boolean isGameWon();
 
     /**
      * returns the count of cells the player has flagged as surely mined
