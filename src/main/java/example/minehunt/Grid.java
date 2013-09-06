@@ -50,10 +50,10 @@ public interface Grid {
     /** returns a reference on a cell
      * @param position the position of the desired cell
      * @return the desired cell
-     * An IllegalArgumentException is raised if there is no cell with such a
+     * An IndexOutOfBoundsException is raised if there is no cell with such a
      * position (you should check getLines() and getColumns())
      */
-    Cell getCell(Position position) throws IllegalArgumentException;
+    Cell getCell(Position position) throws IndexOutOfBoundsException;
 
     /* TODO: méthode(s) pour donner l'état courant de la grille, c'est à dire
      *       l'état de toutes les cases.
@@ -62,3 +62,4 @@ public interface Grid {
      */
 
 }
+

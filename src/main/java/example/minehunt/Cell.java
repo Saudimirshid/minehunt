@@ -76,4 +76,29 @@ public interface Cell {
      */
     CellActionResult clearAround();
 
+    /**
+     * @return the cell located above this.
+     * throws an exception if the desired move falls out of the grid
+     */
+    Cell goUp() throws IndexOutOfBoundsException;
+
+    /**
+     * @return the cell located below this.
+     * throws an exception if the desired move falls out of the grid
+     */
+    Cell goDown() throws IndexOutOfBoundsException;
+
+    /**
+     * @return the cell located to the left of this.
+     * throws an exception if the desired move falls out of the grid
+     */
+    Cell goLeft() throws IndexOutOfBoundsException;
+
+    /**
+     * @return the cell located to the right of this.
+     * throws an exception if the desired move falls out of the grid
+     */
+    Cell goRight() throws IndexOutOfBoundsException;
+
 }
+

@@ -28,7 +28,7 @@ public final class SimpleCell implements Cell {
     }
 
     /**
-     * the grid containing that cell
+     * the grid containing that cell.
      * (might be useful if the player has lost trace of the grid, or is playing
      *  on several grids at once)
      */
@@ -47,6 +47,18 @@ public final class SimpleCell implements Cell {
     }
 
 
+    /* question: why are the getters for "mined" and "minesNearby" not public?
+     * answer: because we do not want to encourage cheating. To know the values
+     * of "mined" and "minesNearby" you have to visit or revisit the cell and
+     * then read the contents of the CellActionResult object.
+     */
+
+    /* edit: the clearAround() method returns a Set of cells automatically
+     * visited. It is painful to revisit each one just to get the value of
+     * minesNearby.
+     * So, here is a getter for minesNearby. It raises an exception if the
+     * cell is not in the state VISITED.
+     */
     public int getMinesNearby() throws IllegalAccessException {
         if (state != State.VISITED)
             throw new IllegalAccessException("cell is not visited");
@@ -54,11 +66,12 @@ public final class SimpleCell implements Cell {
     }
 
 
-    /* question: why are the getters for "mined" and "minesNearby" not public?
-     * answer: because we do not want to encourage cheating. To know the values
-     * of "mined" and "minesNearby" you have to visit or revisit the cell and
-     * then read the contents of the CellActionResult object.
+    /* package-private equivalent of getMinesNearby()
+     *
      */
+    int peekMinesNearby() {
+        return minesNearby;
+    }
 
 
     public State getState() {
@@ -128,6 +141,22 @@ public final class SimpleCell implements Cell {
      */
 
 
+    /* package-private cell-visiting method.
+     * If the cell is flagged, the flag is removed beforehand.
+     */
+    void forcedVisit() {
+        if (state == State.VISITED)
+            return;
+        if (state == State.FLAGGED)
+            grid.decrFlagCount();
+        state = State.VISITED;
+        grid.decrUnvisitedCount();
+        if (mined)
+            grid.incrExplosionCount();
+        return;
+    }
+
+
     /* general-purpose cell-visiting method
      * not intended to be used from outside this class, better use one of
      * the methods that wrap around this one.
@@ -145,11 +174,7 @@ public final class SimpleCell implements Cell {
                                         new HashSet<Cell>()
                                        );
 
-        state = State.VISITED;
-        grid.decrUnvisitedCount();
-
-        if (mined)
-            grid.incrExplosionCount();
+        forcedVisit();
 
         CellActionResult.Outcome outcome =
             ( mined ? CellActionResult.Outcome.EXPLOSION
@@ -159,7 +184,8 @@ public final class SimpleCell implements Cell {
         set.add(this);
 
         if (clearAround && !mined) {
-            // TODO: unveil neighbouring mines with a flood fill algorithm
+            Flood flood = new Flood(grid, position);
+            set.addAll(flood.getVisited());
         }
 
         return new CellActionResult(
@@ -194,4 +220,60 @@ public final class SimpleCell implements Cell {
     }
 
 
+    /**
+     * go to the cell located di lines down and dj columns to the right.
+     * throws an exception if the desired move falls out of the grid
+     */
+    SimpleCell move(int di, int dj) throws IndexOutOfBoundsException {
+        int i = position.getI();
+        int j = position.getJ();
+
+        Position targetPosition = new Position(i+di, j+dj);
+        SimpleCell targetCell;
+        /* grid.getCell can throw an IndexOutOfBoundsException */
+        targetCell = grid.getCell(targetPosition);
+        return targetCell;
+    }
+
+
+    /**
+     * @return the cell located above this.
+     * throws an exception (from "move") if the desired move falls out of
+     * the grid
+     */
+    public SimpleCell goUp() throws IndexOutOfBoundsException {
+        return move(-1,0);
+    }
+
+
+    /**
+     * @return the cell located below this.
+     * throws an exception (from "move") if the desired move falls out of
+     * the grid
+     */
+    public SimpleCell goDown() throws IndexOutOfBoundsException {
+        return move(1,0);
+    }
+
+
+    /**
+     * @return the cell located to the left of this.
+     * throws an exception (from "move") if the desired move falls out of
+     * the grid
+     */
+    public SimpleCell goLeft() throws IndexOutOfBoundsException{
+        return move(0,-1);
+    }
+
+
+    /**
+     * @return the cell located to the right of this.
+     * throws an exception (from "move") if the desired move falls out of
+     * the grid
+     */
+    public SimpleCell goRight() throws IndexOutOfBoundsException {
+        return move(0,1);
+    }
+
 }
+

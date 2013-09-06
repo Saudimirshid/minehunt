@@ -7,13 +7,13 @@ import java.lang.Math;
  */
 public final class SimpleGrid implements Grid {
 
-    final int lines;
-    final int cols;
-    final int mineCount;
-    int unvisitedCount;
-    int explosionCount;
-    int flagCount;
-    final Cell[][] cells;
+    private final int lines;
+    private final int cols;
+    private final int mineCount;
+    private int unvisitedCount;
+    private int explosionCount;
+    private int flagCount;
+    private final SimpleCell[][] cells;
 
 
     /**
@@ -34,7 +34,7 @@ public final class SimpleGrid implements Grid {
         this.unvisitedCount = lines * cols;
         this.explosionCount = 0;
         this.flagCount = 0;
-        this.cells = new Cell[lines][cols];
+        this.cells = new SimpleCell[lines][cols];
 
         boolean[][] tempgrid = new boolean[lines][cols];
         int cellsRemaining = lines * cols;
@@ -189,14 +189,15 @@ public final class SimpleGrid implements Grid {
     /** returns a reference on a cell
      * @param position the position of the desired cell
      * @return the desired cell
-     * An IllegalArgumentException is raised if there is no cell with such a
+     * An IndexOutOfBoundsException is raised if there is no cell with such a
      * position (you should check getLines() and getColumns())
      */
-    public Cell getCell(Position position) throws IllegalArgumentException {
+    public SimpleCell getCell(Position position)
+        throws IndexOutOfBoundsException {
         int i = position.getI();
         int j = position.getJ();
         if ( i < 0 || i >= lines || j < 0 || j >= cols )
-            throw new IllegalArgumentException("position is out of bounds");
+            throw new IndexOutOfBoundsException("position is out of bounds");
         return cells[i][j];
     }
 
