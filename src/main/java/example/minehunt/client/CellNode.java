@@ -8,6 +8,9 @@ import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.PopupControl;
 import javafx.scene.input.MouseEvent;
+/* start of block added 2013-09-17 by sapeur */
+import javafx.scene.input.MouseButton;
+/* end of block added 2013-09-17 by sapeur */
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -34,6 +37,21 @@ public final class CellNode extends Group {
         getChildren().add(rectangle);
 
         addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+            /* note to myself by sapeur, 2013-09-17 :
+                I tried to understand what is happening here, with the help
+                of the official documentation. From the little I have
+                understood, I assume that:
+                    -"event" is the parameter for the anonymous Lambda function
+                    that is enclosing this comment
+                    - because there is only one parameter and its type can be
+                    inferred, it is allowed to be written "event" instead of
+                    "(event)"
+                    - the implied type of "event" is "MouseEvent"
+            */
+            /* start of block added 2013-09-17 by sapeur */
+            MouseButton buttonClicked = event.getButton();
+            if (buttonClicked == MouseButton.PRIMARY) { //usually the left button
+            /* end of block added 2013-09-17 by sapeur */
             final Cell selectedCell = grid.getGrid().getCell(position);
             /* before 2013-09-05 :
             final CellActionResult result = selectedCell.visit();
@@ -75,6 +93,28 @@ public final class CellNode extends Group {
                 }
                 /* new 2013-09-10 : end */
             }
+            /* start of block added 2013-09-17 by sapeur */
+            }
+            if (buttonClicked == MouseButton.SECONDARY) { //usually the right button
+            /* toggle the flag on this cell */
+            Cell selectedCell = grid.getGrid().getCell(position);
+            final Cell.State state = selectedCell.getState();
+            if (state == Cell.State.UNVISITED) {
+                if (selectedCell.setFlag()) { //should always be true
+                final Text text = new Text();
+                text.setId("flag");
+                text.setText("F");
+                text.setTranslateY(15);
+                text.setTranslateX(6);
+                getChildren().add(text);
+                }
+            } else if (state == Cell.State.FLAGGED) {
+                if (selectedCell.unsetFlag()) { //should always be true
+                getChildren().remove(lookup("#flag"));
+                }
+            }
+            }
+            /* end of block added 2013-09-17 by sapeur */
         });
     }
 
