@@ -34,7 +34,6 @@ public final class CellNode extends Parent {
     private final Shape strokeShape;
     private final ImageView imageView;
 
-
     public CellNode(final GridNode grid, final Position position, final Image gridImage) {
         gridNode = grid;
         final double width = grid.getCellWidth();
@@ -102,12 +101,14 @@ public final class CellNode extends Parent {
                 final Cell.State state = selectedCell.getState();
                 if (state == Cell.State.UNVISITED) {
                     if (selectedCell.setFlag()) { //should always be true
-                        final Text text = new Text();
-                        text.setId("flag");
-                        text.setText("F");
-                        text.setTranslateY(15);
-                        text.setTranslateX(6);
-                        getChildren().add(text);
+                        final ImageView view = new ImageView(new Image("flag-icon-128.png"));
+                        view.setId("flag");
+                        view.setPreserveRatio(true);
+                        view.setSmooth(true);
+                        view.setFitHeight(grid.getCellHeight() / 2);
+                        view.setLayoutX((gridNode.getCellWidth() - view.getBoundsInLocal().getWidth()) / 2);
+                        view.setLayoutY((gridNode.getCellHeight() - 3 * view.getBoundsInLocal().getHeight() / 4) / 2);
+                        getChildren().add(view);
                     }
                 } else if (state == Cell.State.FLAGGED) {
                     if (selectedCell.unsetFlag()) { //should always be true
@@ -117,7 +118,7 @@ public final class CellNode extends Parent {
             }
             /* end of block added 2013-09-17 by sapeur */
 
-        
+
         });
     }
 
