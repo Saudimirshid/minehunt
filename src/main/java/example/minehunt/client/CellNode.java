@@ -97,8 +97,27 @@ public final class CellNode extends Parent {
                 }
                 /* new 2013-09-10 : end */
             } else {
-                //TODO
+                /* toggle the flag on this cell */
+                Cell selectedCell = grid.getGrid().getCell(position);
+                final Cell.State state = selectedCell.getState();
+                if (state == Cell.State.UNVISITED) {
+                    if (selectedCell.setFlag()) { //should always be true
+                        final Text text = new Text();
+                        text.setId("flag");
+                        text.setText("F");
+                        text.setTranslateY(15);
+                        text.setTranslateX(6);
+                        getChildren().add(text);
+                    }
+                } else if (state == Cell.State.FLAGGED) {
+                    if (selectedCell.unsetFlag()) { //should always be true
+                        getChildren().remove(lookup("#flag"));
+                    }
+                }
             }
+            /* end of block added 2013-09-17 by sapeur */
+
+        
         });
     }
 
