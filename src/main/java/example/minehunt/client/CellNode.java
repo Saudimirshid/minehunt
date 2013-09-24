@@ -60,21 +60,12 @@ public final class CellNode extends Parent {
         addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
                 final Cell selectedCell = grid.getGrid().getCell(position);
-            /* before 2013-09-05 :
-            final CellActionResult result = selectedCell.visit();
-            */
-            /* new 2013-09-05 : begin */
                 final CellActionResult result = selectedCell.clearAround();
-            /* new 2013-09-05 : end */
                 if (result.getOutcome() == Outcome.EXPLOSION) {
                     Minehunt.notificationPane.setText("You lose, Buddy!!");
                     Minehunt.notificationPane.show();
 
                 } else {
-                /* before 2013-09-05 :
-                showCell(selectedCell, result.getMinesNearby());
-                */
-                /* new 2013-09-05 : begin */
                     final Set<Cell> set = result.getAffectedCells();
                     final Iterator<Cell> iter = set.iterator();
                     while (iter.hasNext()) {
@@ -85,16 +76,13 @@ public final class CellNode extends Parent {
                         } catch (IllegalAccessException e) {
                             minesNearby = -1;
                         }
-                        showCell(cell, minesNearby); /* 2013-09-05 : target of link_1 */
+                        showCell(cell, minesNearby);
                     }
-                /* new 2013-09-05 : end */
-                /* new 2013-09-10 : begin */
                     if (grid.getGrid().isGameWon()) {
                         Minehunt.notificationPane.setText("You win, Buddy!!");
                         Minehunt.notificationPane.show();
                     }
                 }
-                /* new 2013-09-10 : end */
             } else {
                 /* toggle the flag on this cell */
                 Cell selectedCell = grid.getGrid().getCell(position);
@@ -109,16 +97,15 @@ public final class CellNode extends Parent {
                         view.setLayoutX((gridNode.getCellWidth() - view.getBoundsInLocal().getWidth()) / 2);
                         view.setLayoutY((gridNode.getCellHeight() - 3 * view.getBoundsInLocal().getHeight() / 4) / 2);
                         getChildren().add(view);
+                        gridNode.refreshHiddenMinesCount();
                     }
                 } else if (state == Cell.State.FLAGGED) {
                     if (selectedCell.unsetFlag()) { //should always be true
                         getChildren().remove(lookup("#flag"));
+                        gridNode.refreshHiddenMinesCount();
                     }
                 }
             }
-            /* end of block added 2013-09-17 by sapeur */
-
-
         });
     }
 

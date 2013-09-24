@@ -2,10 +2,9 @@ package example.minehunt.client;
 
 import example.minehunt.Grid;
 import example.minehunt.Position;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.Parent;
 import javafx.scene.image.Image;
-import javafx.scene.layout.GridPane;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +16,7 @@ public final class GridNode extends Parent {
 
     private final Grid grid;
     private final List<List<CellNode>> cells;
-    private final SimpleStringProperty hiddenMinesCountProperty;
-    private int hiddenMinesCount;
+    private final SimpleIntegerProperty hiddenMinesCountProperty;
     private final double cellWidth;
     private final double cellHeight;
 
@@ -36,8 +34,7 @@ public final class GridNode extends Parent {
                 cols.add(cellNode);
             }
         }
-        hiddenMinesCount = grid.getMineCount();
-        hiddenMinesCountProperty = new SimpleStringProperty(String.valueOf(hiddenMinesCount));
+        hiddenMinesCountProperty = new SimpleIntegerProperty(grid.getMineCount());
 
     }
 
@@ -57,12 +54,11 @@ public final class GridNode extends Parent {
         return cellHeight;
     }
 
-    void foundMine() {
-        hiddenMinesCount--;
-        hiddenMinesCountProperty.set(String.valueOf(hiddenMinesCount));
+    void refreshHiddenMinesCount() {
+        hiddenMinesCountProperty.set(grid.getMineCount() - grid.getFlagCount());
     }
 
-    SimpleStringProperty hiddenMinesCountProperty() {
+    SimpleIntegerProperty hiddenMinesCountProperty() {
         return hiddenMinesCountProperty;
     }
 }

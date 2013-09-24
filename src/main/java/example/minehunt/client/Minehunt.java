@@ -10,10 +10,9 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.converter.NumberStringConverter;
 import org.controlsfx.control.NotificationPane;
 
 /**
@@ -39,8 +38,8 @@ public final class Minehunt extends Application {
         final ToolBar toolbar = new ToolBar();
 
         final Image image = new Image("mine.png", 32, 32, true, true);
-        final Label mineLabel = new Label(gridNode.hiddenMinesCountProperty().get(), new ImageView(image));
-        mineLabel.textProperty().bind(gridNode.hiddenMinesCountProperty());
+        final Label mineLabel = new Label(String.valueOf(gridNode.hiddenMinesCountProperty().get()), new ImageView(image));
+        mineLabel.textProperty().bindBidirectional(gridNode.hiddenMinesCountProperty(), new NumberStringConverter());
 
         toolbar.getItems().add(mineLabel);
 
