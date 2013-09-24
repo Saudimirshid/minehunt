@@ -4,6 +4,11 @@ import example.minehunt.Cell;
 import example.minehunt.CellActionResult;
 import example.minehunt.CellActionResult.Outcome;
 import example.minehunt.Position;
+import javafx.animation.FadeTransition;
+import javafx.animation.ParallelTransition;
+import javafx.animation.RotateTransition;
+import javafx.application.Platform;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -17,10 +22,12 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontSmoothingType;
 import javafx.scene.text.Text;
 
-import java.util.Iterator;
-import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import static java.lang.String.valueOf;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static javafx.util.Duration.millis;
 
 /* new 2013-09-05 : begin */
 /* new 2013-09-05 : end */
@@ -29,6 +36,8 @@ import static java.lang.String.valueOf;
  *
  */
 public final class CellNode extends Parent {
+
+    private static final ScheduledExecutorService SCHEDULED_EXECUTOR_SERVICE = Executors.newScheduledThreadPool(10);
 
     private final GridNode gridNode;
     private final Shape strokeShape;
@@ -66,22 +75,28 @@ public final class CellNode extends Parent {
                     Minehunt.notificationPane.show();
 
                 } else {
-                    final Set<Cell> set = result.getAffectedCells();
-                    final Iterator<Cell> iter = set.iterator();
-                    while (iter.hasNext()) {
-                        Cell cell = iter.next();
-                        int minesNearby;
-                        try {
-                            minesNearby = cell.getMinesNearby();
-                        } catch (IllegalAccessException e) {
-                            minesNearby = -1;
+                    long millis = 0;
+                    for (Cell cell : result.getAffectedCells()) {
+                        //the selected cell should be displayed immediately
+                        if (cell.getPosition().equals(position)) {
+                            showCell(cell, cell.getMinesNearby());
+                        } else {
+                            //display other cell in 10 ms interval
+                            millis += 10;
+                            SCHEDULED_EXECUTOR_SERVICE.schedule(
+                                    () -> {
+                                        Platform.runLater(() -> showCell(cell, cell.getMinesNearby()));
+                                    }
+                                    , millis, MILLISECONDS);
+
                         }
-                        showCell(cell, minesNearby);
+
                     }
                     if (grid.getGrid().isGameWon()) {
                         Minehunt.notificationPane.setText("You win, Buddy!!");
                         Minehunt.notificationPane.show();
                     }
+
                 }
             } else {
                 /* toggle the flag on this cell */
@@ -96,12 +111,22 @@ public final class CellNode extends Parent {
                         view.setFitHeight(grid.getCellHeight() / 2);
                         view.setLayoutX((gridNode.getCellWidth() - view.getBoundsInLocal().getWidth()) / 2);
                         view.setLayoutY((gridNode.getCellHeight() - 3 * view.getBoundsInLocal().getHeight() / 4) / 2);
+                        view.setOpacity(0);
                         getChildren().add(view);
+                        final FadeTransition fadeTransition = new FadeTransition(millis(250), view);
+                        fadeTransition.setFromValue(0);
+                        fadeTransition.setToValue(1);
+                        fadeTransition.play();
                         gridNode.refreshHiddenMinesCount();
                     }
                 } else if (state == Cell.State.FLAGGED) {
                     if (selectedCell.unsetFlag()) { //should always be true
-                        getChildren().remove(lookup("#flag"));
+                        final Node imageFlag = lookup("#flag");
+                        final FadeTransition fadeTransition = new FadeTransition(millis(250), imageFlag);
+                        fadeTransition.setFromValue(1);
+                        fadeTransition.setToValue(0);
+                        fadeTransition.setOnFinished(e -> getChildren().remove(imageFlag));
+                        fadeTransition.play();
                         gridNode.refreshHiddenMinesCount();
                     }
                 }
@@ -141,7 +166,10 @@ public final class CellNode extends Parent {
 
     private void showCell(final Cell cell, final int nearby) {
         final CellNode node = gridNode.getCell(cell.getPosition());
-        node.imageView.setOpacity(0.4);
+        final FadeTransition imageTransition = new FadeTransition(millis(250), node.imageView);
+        imageTransition.setFromValue(1.0);
+        imageTransition.setToValue(0.4);
+        imageTransition.play();
         //node.rectangle.setFill(Color.GREEN);
 
         final Text text = new Text();
@@ -149,26 +177,20 @@ public final class CellNode extends Parent {
         text.setFill(getMinesNearbyPaint(nearby));
         text.setFontSmoothingType(FontSmoothingType.LCD);
         text.setFont(new Font(20));
+        text.setOpacity(0);
 
-        /* before 2013-09-05 :
-        getChildren().add(text); // note by sapeur: check whether there is a
-                                    bug here. Is the "getChildren" applying to
-                                    the "node" variable declared inside this
-                                    method "showCell", or to the "node" object
-                                    enclosing this method "showCell" ?
-                                    Experiment shows: without the 2013-09-05
-                                    modification, when many cells are uncovered
-                                    at once at link_1 in this file, the
-                                    number "valueOf(nearby)" of every cell
-                                    is written on the starting cell, yelding
-                                    an illegible superposition of numbers.
-        */
-        /* new 2013-09-05 : begin */
         text.setLayoutX((gridNode.getCellWidth() - text.getBoundsInLocal().getWidth()) / 2);
         text.setLayoutY((gridNode.getCellHeight() + text.getBoundsInLocal().getHeight() / 2) / 2);
-        node.getChildren().add(text); /* this seems to solve the issue
-        mentioned above, about the superposition of numbers */
-        /* new 2013-09-05 : end */
+        node.getChildren().add(text);
+
+        final FadeTransition numberFadeTransition = new FadeTransition(millis(250), text);
+        numberFadeTransition.setFromValue(0);
+        numberFadeTransition.setToValue(1);
+        final RotateTransition numberRotateTransition = new RotateTransition(millis(400), text);
+        numberRotateTransition.setByAngle(360);
+        final ParallelTransition numberTransition = new ParallelTransition(numberFadeTransition, numberRotateTransition);
+
+        numberTransition.play();
     }
 }
 

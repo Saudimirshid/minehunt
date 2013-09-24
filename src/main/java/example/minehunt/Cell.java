@@ -32,7 +32,7 @@ public interface Cell {
      * So, here is a getter for minesNearby. It raises an exception if the
      * cell is not in the state VISITED.
      */
-    int getMinesNearby() throws IllegalAccessException;
+    int getMinesNearby();
 
     State getState();
 

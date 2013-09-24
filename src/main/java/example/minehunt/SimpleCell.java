@@ -59,9 +59,9 @@ public final class SimpleCell implements Cell {
      * So, here is a getter for minesNearby. It raises an exception if the
      * cell is not in the state VISITED.
      */
-    public int getMinesNearby() throws IllegalAccessException {
+    public int getMinesNearby() {
         if (state != State.VISITED)
-            throw new IllegalAccessException("cell is not visited");
+            throw new RuntimeException("cell is not visited");
         return minesNearby;
     }
 
