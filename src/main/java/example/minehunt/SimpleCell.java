@@ -174,14 +174,17 @@ public final class SimpleCell implements Cell {
                                         new HashSet<Cell>()
                                        );
 
-        forcedVisit();
+        HashSet<Cell> set = new HashSet<Cell>();
+
+        if (state != State.VISITED) {
+            forcedVisit();
+            set.add(this);
+        }
 
         CellActionResult.Outcome outcome =
             ( mined ? CellActionResult.Outcome.EXPLOSION
                     : CellActionResult.Outcome.CLEARED
             );
-        HashSet<Cell> set = new HashSet<Cell>();
-        set.add(this);
 
         if (clearAround && !mined) {
             Flood flood = new Flood(grid, position);
@@ -200,7 +203,7 @@ public final class SimpleCell implements Cell {
     /**
      * the player visits the cell
      *
-     * with this method, you must ignore the contents of the "affectedCells"
+     * with this method, you may ignore the contents of the "affectedCells"
      * field from the object returned
      */
     public CellActionResult visit() {
