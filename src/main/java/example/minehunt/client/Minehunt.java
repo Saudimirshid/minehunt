@@ -4,6 +4,7 @@ import example.minehunt.Grid;
 import example.minehunt.MinehuntService;
 import example.minehunt.SimpleMinehuntService;
 import javafx.application.Application;
+import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
@@ -36,6 +37,7 @@ public final class Minehunt extends Application {
         final Grid grid = minehuntService.createGrid(10, 10, 8);
         final GridNode gridNode = new GridNode(grid, background);
         final ToolBar toolbar = new ToolBar();
+        toolbar.setOrientation(Orientation.VERTICAL);
 
         final Image image = new Image("mine.png", 32, 32, true, true);
         final Label mineLabel = new Label(String.valueOf(gridNode.hiddenMinesCountProperty().get()), new ImageView(image));
@@ -44,7 +46,7 @@ public final class Minehunt extends Application {
         toolbar.getItems().add(mineLabel);
 
         final BorderPane pane = new BorderPane();
-        pane.setTop(toolbar);
+        pane.setLeft(toolbar);
         pane.setCenter(gridNode);
 
         notificationPane = new NotificationPane(pane);
