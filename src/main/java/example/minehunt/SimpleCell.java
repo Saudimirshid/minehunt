@@ -1,5 +1,5 @@
 package example.minehunt; 
-import java.util.HashSet;
+import java.util.ArrayList;
 
 /**
  *
@@ -171,14 +171,14 @@ public final class SimpleCell implements Cell {
                                         this,
                                         CellActionResult.Outcome.BLOCKED,
                                         -1,
-                                        new HashSet<Cell>()
+                                        new ArrayList<Cell>()
                                        );
 
-        HashSet<Cell> set = new HashSet<Cell>();
+        ArrayList<Cell> list = new ArrayList<Cell>();
 
         if (state != State.VISITED) {
             forcedVisit();
-            set.add(this);
+            list.add(this);
         }
 
         CellActionResult.Outcome outcome =
@@ -188,14 +188,14 @@ public final class SimpleCell implements Cell {
 
         if (clearAround && !mined) {
             Flood flood = new Flood(grid, position);
-            set.addAll(flood.getVisited());
+            list.addAll(flood.getVisited());
         }
 
         return new CellActionResult(
                                     this,
                                     outcome,
                                     minesNearby,
-                                    set
+                                    list
                                    );
     }
 

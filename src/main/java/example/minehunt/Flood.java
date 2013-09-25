@@ -1,6 +1,6 @@
 package example.minehunt;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.LinkedList; /* all we need is a LIFO stack */
 
 /**
@@ -57,7 +57,7 @@ class Flood {
     private SimpleCell seed;
 
     /* the list of newly visited cells throughout the process */
-    private HashSet<SimpleCell> set;
+    private ArrayList<SimpleCell> list;
 
 
     /* a locally used enumeration, to remember the status of cells examined
@@ -72,7 +72,7 @@ class Flood {
     /* all the work is done in this constructor */
     Flood(SimpleGrid grid, Position position) {
 
-        this.set = new HashSet<SimpleCell>();
+        this.list = new ArrayList<SimpleCell>();
 
         try {
             this.seed = grid.getCell(position);
@@ -130,21 +130,21 @@ class Flood {
             FloodAlgo2 fa2;
             /* fin de modif */
 
-            /* FloodAlgo.processCell(above, aboveStatus, set); */
+            /* FloodAlgo.processCell(above, aboveStatus, list); */
             fa2 = new FloodAlgo2(above);
             aboveStatus = fa2.status;
             if (fa2.visitNow) {
             	above.forcedVisit();
-            	set.add(above);
+            	list.add(above);
             }
             /* fin de modif */
 
-            /* FloodAlgo.processCell(below, belowStatus, set); */
+            /* FloodAlgo.processCell(below, belowStatus, list); */
             fa2 = new FloodAlgo2(below);
             belowStatus = fa2.status;
             if (fa2.visitNow) {
             	below.forcedVisit();
-            	set.add(below);
+            	list.add(below);
             }
             /* fin de modif */
 
@@ -168,19 +168,19 @@ class Flood {
                     catch (IndexOutOfBoundsException e) {
                         above = null;
                     }
-                    /* FloodAlgo.processCell(above, aboveStatus, set); */
+                    /* FloodAlgo.processCell(above, aboveStatus, list); */
                     fa2 = new FloodAlgo2(above);
                     aboveStatus = fa2.status;
                     if (fa2.visitNow) {
                     	above.forcedVisit();
-                    	set.add(above);
+                    	list.add(above);
                     }
                     /* fin de modif */
 
                     if (formerAboveStatus != aboveStatus &&
                         aboveStatus == Status.TOVISIT) {
                         above.forcedVisit();
-                        set.add(above);
+                        list.add(above);
                         stack.push(above);
                     }
                 }
@@ -194,19 +194,19 @@ class Flood {
                     catch (IndexOutOfBoundsException e) {
                         below = null;
                     }
-                    /* FloodAlgo.processCell(below, belowStatus, set); */
+                    /* FloodAlgo.processCell(below, belowStatus, list); */
                     fa2 = new FloodAlgo2(below);
                     belowStatus = fa2.status;
                     if (fa2.visitNow) {
                     	below.forcedVisit();
-                    	set.add(below);
+                    	list.add(below);
                     }
                     /* fin de modif */
 
                     if (formerBelowStatus != belowStatus &&
                         belowStatus == Status.TOVISIT) {
                         below.forcedVisit();
-                        set.add(below);
+                        list.add(below);
                         stack.push(below);
                     }
                 }
@@ -217,18 +217,18 @@ class Flood {
                 catch (IndexOutOfBoundsException e) {
                     current = null;
                 }
-                /* FloodAlgo.processCell(current, currentStatus, set); */
+                /* FloodAlgo.processCell(current, currentStatus, list); */
                 fa2 = new FloodAlgo2(current);
                 currentStatus = fa2.status;
                 if (fa2.visitNow) {
                 	current.forcedVisit();
-                	set.add(current);
+                	list.add(current);
                 }
                 /* fin de modif */
 
                 if (currentStatus == Status.TOVISIT) {
                     current.forcedVisit();
-                    set.add(current);
+                    list.add(current);
                 }
             } while (currentStatus == Status.TOVISIT);
 
@@ -249,19 +249,19 @@ class Flood {
                     catch (IndexOutOfBoundsException e) {
                         above = null;
                     }
-                    /* FloodAlgo.processCell(above, aboveStatus, set); */
+                    /* FloodAlgo.processCell(above, aboveStatus, list); */
                     fa2 = new FloodAlgo2(above);
                     aboveStatus = fa2.status;
                     if (fa2.visitNow) {
                     	above.forcedVisit();
-                    	set.add(above);
+                    	list.add(above);
                     }
                     /* fin de modif */
 
                     if (formerAboveStatus != aboveStatus &&
                         formerAboveStatus == Status.TOVISIT) {
                         formerAbove.forcedVisit();
-                        set.add(formerAbove);
+                        list.add(formerAbove);
                         stack.push(formerAbove);
                     }
                 }
@@ -275,19 +275,19 @@ class Flood {
                     catch (IndexOutOfBoundsException e) {
                         below = null;
                     }
-                    /* FloodAlgo.processCell(below, belowStatus, set); */
+                    /* FloodAlgo.processCell(below, belowStatus, list); */
                     fa2 = new FloodAlgo2(below);
                     belowStatus = fa2.status;
                     if (fa2.visitNow) {
                     	below.forcedVisit();
-                    	set.add(below);
+                    	list.add(below);
                     }
                     /* fin de modif */
 
                     if (formerBelowStatus != belowStatus &&
                         formerBelowStatus == Status.TOVISIT) {
                         formerBelow.forcedVisit();
-                        set.add(formerBelow);
+                        list.add(formerBelow);
                         stack.push(formerBelow);
                     }
                 }
@@ -298,30 +298,30 @@ class Flood {
                 catch (IndexOutOfBoundsException e) {
                     current = null;
                 }
-                /* FloodAlgo.processCell(current, currentStatus, set); */
+                /* FloodAlgo.processCell(current, currentStatus, list); */
                 fa2 = new FloodAlgo2(current);
                 currentStatus = fa2.status;
                 if (fa2.visitNow) {
                 	current.forcedVisit();
-                	set.add(current);
+                	list.add(current);
                 }
                 /* fin de modif */
 
                 if (currentStatus == Status.TOVISIT) {
                     current.forcedVisit();
-                    set.add(current);
+                    list.add(current);
                 }
             } while (currentStatus == Status.TOVISIT);
 
             if (aboveStatus == Status.TOVISIT) {
                 above.forcedVisit();
-                set.add(above);
+                list.add(above);
                 stack.push(above);
             }
 
             if (belowStatus == Status.TOVISIT) {
                 below.forcedVisit();
-                set.add(below);
+                list.add(below);
                 stack.push(below);
             }
 
@@ -332,8 +332,8 @@ class Flood {
     /**
      * @return the list of cells newly visited throughout the Flood process.
      */
-    HashSet<SimpleCell> getVisited() {
-        return set;
+    ArrayList<SimpleCell> getVisited() {
+        return list;
     }
 
 
@@ -382,15 +382,15 @@ class Flood {
      * "processCell" , c'est a dire sur un exemple:
      *   SimpleCell cell = grid.getCell(position);
      *   Status status = Status.NONE;
-     *   HashSet<SimpleCell> set = new HashSet<SimpleCell>();
-     *   FloodAlgo.processCell(cell,status,set);
-     *   // ici le contenu de cell et/ou status et/ou set peut avoir change
+     *   ArrayList<SimpleCell> list = new ArrayList<SimpleCell>();
+     *   FloodAlgo.processCell(cell,status,list);
+     *   // ici le contenu de cell et/ou status et/ou list peut avoir change
      */
     private static class FloodAlgo {
 
         static void processCell(SimpleCell cell,
                                 Status status,
-                                HashSet<SimpleCell> set) {
+                                ArrayList<SimpleCell> list) {
             if (cell == null)
                 status = Status.NONE;
             else {
@@ -413,7 +413,7 @@ class Flood {
                                                 fields of SimpleCell package-
                                                 private, and modify them directly
                                                 from here */
-                        set.add(cell);
+                        list.add(cell);
                         status = Status.FORGET;
                     }
                     else

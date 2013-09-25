@@ -29,8 +29,6 @@ import static java.lang.String.valueOf;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static javafx.util.Duration.millis;
 
-/* new 2013-09-05 : begin */
-/* new 2013-09-05 : end */
 
 /**
  *

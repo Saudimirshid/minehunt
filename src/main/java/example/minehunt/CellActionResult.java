@@ -1,6 +1,6 @@
 package example.minehunt;
 
-import java.util.Set;
+import java.util.List;
 
 /*
  *
@@ -16,7 +16,7 @@ import java.util.Set;
  * explicitly for some action on the nearby cells.
  *
  * If the implementor of this class is nice he (or she, please do not start an
- * argument) might decide to set "affectedCells" to "null" or to the empty Set
+ * argument) might decide to set "affectedCells" to "null" or to the empty List
  * whenever nothing has been asked about the nearby cells, or whenever nothing
  * has been done because the outcome is "BLOCKED". Nothing has been decided yet.
  * 
@@ -40,12 +40,12 @@ public final class CellActionResult {
     final Cell selectedCell;
     final Outcome outcome;
     final int minesNearby;
-    final Set<Cell> affectedCells;
+    final List<Cell> affectedCells;
 
     CellActionResult(Cell selectedCell,
                      Outcome outcome,
                      int minesNearby,
-                     Set<Cell> affectedCells
+                     List<Cell> affectedCells
                     ) {
         this.selectedCell = selectedCell;
         this.outcome = outcome;
@@ -61,7 +61,7 @@ public final class CellActionResult {
         return minesNearby;
     }
 
-    public Set<Cell> getAffectedCells() {
+    public List<Cell> getAffectedCells() {
         return affectedCells;
     }
 }
