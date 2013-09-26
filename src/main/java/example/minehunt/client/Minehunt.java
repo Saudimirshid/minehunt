@@ -1,12 +1,16 @@
 package example.minehunt.client;
 
+import eu.hansolo.enzo.clock.Clock;
+import eu.hansolo.enzo.clock.ClockBuilder;
 import example.minehunt.Grid;
 import example.minehunt.MinehuntService;
 import example.minehunt.SimpleMinehuntService;
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -22,6 +26,7 @@ import org.controlsfx.control.NotificationPane;
 public final class Minehunt extends Application {
 
     static NotificationPane notificationPane;
+    static Clock clock;
 
     public static void main(String[] args) {
         launch(args);
@@ -44,6 +49,16 @@ public final class Minehunt extends Application {
         mineLabel.textProperty().bindBidirectional(gridNode.hiddenMinesCountProperty(), new NumberStringConverter());
 
         toolbar.getItems().add(mineLabel);
+
+        clock = ClockBuilder.create()
+                .prefSize(150, 150)
+                .design(Clock.Design.DB)
+                .nightMode(true)
+                .build();
+        clock.start();
+
+        toolbar.getItems().add(new Separator(Orientation.HORIZONTAL));
+        toolbar.getItems().add(clock);
 
         final BorderPane pane = new BorderPane();
         pane.setLeft(toolbar);

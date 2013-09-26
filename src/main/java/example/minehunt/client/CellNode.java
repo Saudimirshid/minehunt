@@ -22,6 +22,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontSmoothingType;
 import javafx.scene.text.Text;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -69,7 +71,9 @@ public final class CellNode extends Parent {
                 final Cell selectedCell = grid.getGrid().getCell(position);
                 final CellActionResult result = selectedCell.clearAround();
                 if (result.getOutcome() == Outcome.EXPLOSION) {
-                    Minehunt.notificationPane.setText("You lose, Buddy!!");
+
+                    Minehunt.notificationPane.setText("You lose, Buddy, in "
+                            + formatDate(Minehunt.clock.stop()) + " !!");
                     Minehunt.notificationPane.show();
 
                 } else {
@@ -91,7 +95,8 @@ public final class CellNode extends Parent {
 
                     }
                     if (grid.getGrid().isGameWon()) {
-                        Minehunt.notificationPane.setText("You win, Buddy!!");
+                        Minehunt.notificationPane.setText("You win, Buddy, in "
+                                + formatDate(Minehunt.clock.stop()) + " !!");
                         Minehunt.notificationPane.show();
                     }
 
@@ -130,6 +135,12 @@ public final class CellNode extends Parent {
                 }
             }
         });
+    }
+
+    private String formatDate(final long t) {
+        return t > 1000 * 60
+                ? new SimpleDateFormat("m'm' ss's' SSS").format(new Date(t))
+                : new SimpleDateFormat("s's' SSS").format(new Date(t));
     }
 
     private Rectangle createShape(final double width, final double height) {
