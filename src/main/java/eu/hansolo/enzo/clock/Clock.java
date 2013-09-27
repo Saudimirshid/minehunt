@@ -48,7 +48,7 @@ public class Clock extends Control {
     private ObjectProperty<Design> design;
     private boolean                _highlightVisible;
     private BooleanProperty        highlightVisible;
-    private long start;
+    private volatile long start;
 
 
     // ******************** Constructors **************************************

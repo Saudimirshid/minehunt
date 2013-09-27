@@ -7,6 +7,7 @@ import example.minehunt.Position;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.RotateTransition;
+import javafx.animation.ScaleTransition;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -77,17 +78,17 @@ public final class CellNode extends Parent {
                     Minehunt.notificationPane.show();
 
                 } else {
-                    long millis = 0;
+                    long millis = 100;
                     for (Cell cell : result.getAffectedCells()) {
                         //the selected cell should be displayed immediately
                         if (cell.getPosition().equals(position)) {
-                            showCell(cell, cell.getMinesNearby());
+                            showCell(cell, cell.getMinesNearby(), true);
                         } else {
                             //display other cell in 10 ms interval
                             millis += 10;
                             SCHEDULED_EXECUTOR_SERVICE.schedule(
                                     () -> {
-                                        Platform.runLater(() -> showCell(cell, cell.getMinesNearby()));
+                                        Platform.runLater(() -> showCell(cell, cell.getMinesNearby(), false));
                                     }
                                     , millis, MILLISECONDS);
 
@@ -173,13 +174,12 @@ public final class CellNode extends Parent {
         }
     }
 
-    private void showCell(final Cell cell, final int nearby) {
+    private void showCell(final Cell cell, final int nearby, final boolean selected) {
         final CellNode node = gridNode.getCell(cell.getPosition());
-        final FadeTransition imageTransition = new FadeTransition(millis(250), node.imageView);
+        final FadeTransition imageTransition = new FadeTransition(millis(500), node.imageView);
         imageTransition.setFromValue(1.0);
         imageTransition.setToValue(0.4);
         imageTransition.play();
-        //node.rectangle.setFill(Color.GREEN);
 
         final Text text = new Text();
         text.setText(valueOf(nearby));
@@ -197,7 +197,19 @@ public final class CellNode extends Parent {
         numberFadeTransition.setToValue(1);
         final RotateTransition numberRotateTransition = new RotateTransition(millis(400), text);
         numberRotateTransition.setByAngle(360);
-        final ParallelTransition numberTransition = new ParallelTransition(numberFadeTransition, numberRotateTransition);
+
+        ParallelTransition numberTransition;
+        if (selected) {
+            final ScaleTransition scaleTransition = new ScaleTransition(millis(200), text);
+            scaleTransition.setAutoReverse(true);
+            scaleTransition.setCycleCount(2);
+            scaleTransition.setByX(0.8);
+            scaleTransition.setByY(0.8);
+
+            numberTransition = new ParallelTransition(numberFadeTransition, numberRotateTransition, scaleTransition);
+        } else {
+            numberTransition = new ParallelTransition(numberFadeTransition, numberRotateTransition);
+        }
 
         numberTransition.play();
     }
