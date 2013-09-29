@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import static example.minehunt.client.GameNode.getCurrentGame;
 import static java.lang.String.valueOf;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static javafx.util.Duration.millis;
@@ -72,10 +73,8 @@ public final class CellNode extends Parent {
                 final Cell selectedCell = grid.getGrid().getCell(position);
                 final CellActionResult result = selectedCell.clearAround();
                 if (result.getOutcome() == Outcome.EXPLOSION) {
-
-                    Minehunt.notificationPane.setText("You lose, Buddy, in "
-                            + formatDate(Minehunt.clock.stop()) + " !!");
-                    Minehunt.notificationPane.show();
+                    getCurrentGame(this).displayMessage("You lose, Buddy, in "
+                            + formatDate(getCurrentGame(this).stopClock()) + " !!");
 
                 } else {
                     long millis = 100;
@@ -96,9 +95,8 @@ public final class CellNode extends Parent {
 
                     }
                     if (grid.getGrid().isGameWon()) {
-                        Minehunt.notificationPane.setText("You win, Buddy, in "
-                                + formatDate(Minehunt.clock.stop()) + " !!");
-                        Minehunt.notificationPane.show();
+                        getCurrentGame(this).displayMessage("You win, Buddy, in "
+                                + formatDate(getCurrentGame(this).stopClock()) + " !!");
                     }
 
                 }
