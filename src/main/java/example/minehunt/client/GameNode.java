@@ -4,9 +4,9 @@ import eu.hansolo.enzo.clock.Clock;
 import eu.hansolo.enzo.clock.ClockBuilder;
 import example.minehunt.Grid;
 import example.minehunt.MinehuntService;
+import javafx.beans.binding.Bindings;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
@@ -14,13 +14,13 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.util.converter.NumberStringConverter;
 import org.controlsfx.control.NotificationPane;
+
 
 /**
  *
  */
-public final class GameNode extends Parent {
+public final class GameNode extends NotificationPane {
 
     private static final String GAME_ID = "gameId";
 
@@ -28,7 +28,6 @@ public final class GameNode extends Parent {
         return (GameNode) node.getScene().lookup("#" + GAME_ID);
     }
 
-    private final NotificationPane notificationPane;
     private final Clock clock;
 
     public GameNode(final MinehuntService minehuntService, final String backgroundImage) {
@@ -42,7 +41,7 @@ public final class GameNode extends Parent {
 
         final Image image = new Image("mine.png", 32, 32, true, true);
         final Label mineLabel = new Label(String.valueOf(gridNode.hiddenMinesCountProperty().get()), new ImageView(image));
-        mineLabel.textProperty().bindBidirectional(gridNode.hiddenMinesCountProperty(), new NumberStringConverter());
+        mineLabel.textProperty().bind(Bindings.convert(gridNode.hiddenMinesCountProperty()));
 
         toolbar.getItems().add(mineLabel);
 
@@ -65,15 +64,14 @@ public final class GameNode extends Parent {
         pane.setLeft(toolbar);
         pane.setCenter(gridNode);
 
-        notificationPane = new NotificationPane(pane);
-        notificationPane.getStyleClass().add(NotificationPane.STYLE_CLASS_DARK);
-        notificationPane.setShowFromTop(false);
-        getChildren().add(notificationPane);
+        setContent(pane);
+        getStyleClass().add(NotificationPane.STYLE_CLASS_DARK);
+        setShowFromTop(false);
     }
 
     void displayMessage(final String message) {
-        notificationPane.setText(message);
-        notificationPane.show();
+        setText(message);
+        show();
     }
 
     long stopClock() {
