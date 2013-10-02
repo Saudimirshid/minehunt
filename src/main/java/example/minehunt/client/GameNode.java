@@ -4,6 +4,7 @@ import eu.hansolo.enzo.clock.Clock;
 import eu.hansolo.enzo.clock.ClockBuilder;
 import example.minehunt.Grid;
 import example.minehunt.MinehuntService;
+import example.minehunt.client.flickr.FlickProvider;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
@@ -30,12 +31,11 @@ public final class GameNode extends NotificationPane {
 
     private final Clock clock;
 
-    public GameNode(final MinehuntService minehuntService, final String backgroundImage) {
+    public GameNode(final MinehuntService minehuntService, final Image backgroundImage) {
         setId(GAME_ID);
-        final Image background = new Image("mer-surface.jpg");
         //final Image background = new Image("etoile-mer.jpg");
         final Grid grid = minehuntService.createGrid(10, 10, 8);
-        final GridNode gridNode = new GridNode(grid, background);
+        final GridNode gridNode = new GridNode(grid, backgroundImage);
         final ToolBar toolbar = new ToolBar();
         toolbar.setOrientation(Orientation.VERTICAL);
 
@@ -57,7 +57,7 @@ public final class GameNode extends NotificationPane {
         toolbar.getItems().add(new Separator(Orientation.HORIZONTAL));
 
         final Button newGameButton = new Button("New Game");
-        newGameButton.setOnAction(event -> getScene().setRoot(new GameNode(minehuntService, backgroundImage)));
+        newGameButton.setOnAction(event -> getScene().setRoot(new GameNode(minehuntService, FlickProvider.getInstance().nextImage())));
         toolbar.getItems().add(newGameButton);
 
         final BorderPane pane = new BorderPane();
