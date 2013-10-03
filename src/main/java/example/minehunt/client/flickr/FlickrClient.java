@@ -14,6 +14,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.concurrent.ThreadLocalRandom;
 
 
@@ -72,8 +73,28 @@ final class FlickrClient {
                 System.out.println("photo not found");
                 return null;
             }
+
             final Photo photo = results.get(0);
-            return photosInterface.getImage(photo, Size.MEDIUM_800);
+            final Collection<Size> sizes = photosInterface.getSizes(photo.getId());
+            Size size = null;
+            int diff = Integer.MAX_VALUE;
+            for (Size s : sizes) {
+                int d = 800 - s.getWidth();
+                if (d >= 0 && d < diff) {
+                    diff = d;
+                    size = s;
+                }
+            }
+            if (size == null) {
+                return null;
+            }
+            if (size.getHeight() > 600 || size.getWidth() < 500
+                    || size.getHeight() < 300 || size.getHeight() > size.getWidth()) {
+                System.out.println("Height and width are not ok");
+                return null;
+            }
+
+            return photosInterface.getImage(photo, size.getLabel());
         } catch (Exception e) {
             e.printStackTrace();
             return null;
