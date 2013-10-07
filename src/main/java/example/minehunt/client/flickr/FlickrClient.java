@@ -8,6 +8,7 @@ import com.flickr4java.flickr.photos.PhotosInterface;
 import com.flickr4java.flickr.photos.SearchParameters;
 import com.flickr4java.flickr.photos.Size;
 import javafx.scene.image.Image;
+import javafx.stage.Screen;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -24,6 +25,14 @@ import java.util.concurrent.ThreadLocalRandom;
 final class FlickrClient {
 
     private static final String API_KEY = System.getProperty("minehunt.flickr.key");
+
+    private static final double MAX_WIDTH;
+    private static final double MAX_HEIGHT;
+
+    static {
+        MAX_WIDTH = Screen.getPrimary().getVisualBounds().getWidth() - 50;
+        MAX_HEIGHT = Screen.getPrimary().getVisualBounds().getHeight() - 30;
+    }
 
     private Flickr flickr;
 
@@ -79,7 +88,7 @@ final class FlickrClient {
             Size size = null;
             int diff = Integer.MAX_VALUE;
             for (Size s : sizes) {
-                int d = 800 - s.getWidth();
+                int d = (int) MAX_WIDTH - s.getWidth();
                 if (d >= 0 && d < diff) {
                     diff = d;
                     size = s;
@@ -88,8 +97,8 @@ final class FlickrClient {
             if (size == null) {
                 return null;
             }
-            if (size.getHeight() > 600 || size.getWidth() < 500
-                    || size.getHeight() < 300 || size.getHeight() > size.getWidth()) {
+            if (size.getHeight() > MAX_HEIGHT || size.getWidth() < 400
+                    || size.getHeight() < 300) {
                 System.out.println("Height and width are not ok");
                 return null;
             }

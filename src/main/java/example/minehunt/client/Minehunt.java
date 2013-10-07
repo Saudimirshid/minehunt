@@ -7,8 +7,8 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 /**
  *
@@ -21,7 +21,8 @@ public final class Minehunt extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        final Stage stage = new Stage(StageStyle.UTILITY);
+        final Stage stage = new Stage();
+        stage.setResizable(false);
 
         final MinehuntService minehuntService = new SimpleMinehuntService();
         final Image backgroundImage = FlickProvider.getInstance().nextImage();
@@ -31,6 +32,9 @@ public final class Minehunt extends Application {
 
         stage.setOnCloseRequest(windowEvent -> System.exit(0));
         stage.setTitle("Minehunt");
+        stage.setX(Screen.getPrimary().getVisualBounds().getMinX());
+        stage.setY(Screen.getPrimary().getVisualBounds().getMinY());
+        //stage.setFullScreen(true);
         stage.show();
 
         //TODO this is a bug on databinding ("bomb") try to remove this later
