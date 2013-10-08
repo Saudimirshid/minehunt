@@ -9,13 +9,11 @@ import javafx.animation.Animation.Status;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
-import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
@@ -23,6 +21,8 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Window;
 import javafx.util.Duration;
@@ -45,6 +45,7 @@ public final class GameNode extends Region {
     private final NotificationPane notificationPane;
     private final Clock clock;
     private final GridNode gridNode;
+    private final VBox leftSide;
 
     public GameNode(final MinehuntService minehuntService, final Image backgroundImage) {
         setId(GAME_ID);
@@ -52,14 +53,12 @@ public final class GameNode extends Region {
 
         final Grid grid = minehuntService.createGrid(10, 10, 8);
         gridNode = new GridNode(grid, backgroundImage);
-        final ToolBar toolbar = new ToolBar();
-        toolbar.setOrientation(Orientation.VERTICAL);
+
 
         final Image image = new Image("mine.png", 32, 32, true, true);
         final Label mineLabel = new Label(String.valueOf(gridNode.hiddenMinesCountProperty().get()), new ImageView(image));
         mineLabel.textProperty().bind(Bindings.convert(gridNode.hiddenMinesCountProperty()));
 
-        toolbar.getItems().add(mineLabel);
 
         clock = ClockBuilder.create()
                 .prefSize(150, 150)
@@ -68,12 +67,17 @@ public final class GameNode extends Region {
                 .build();
         Platform.runLater(clock::start);
 
-
-        toolbar.getItems().add(new Separator(Orientation.HORIZONTAL));
-        toolbar.getItems().add(clock);
-        toolbar.getItems().add(new Separator(Orientation.HORIZONTAL));
-
         final Button newGameButton = new Button("New Game");
+        newGameButton.getStyleClass().add("button");
+
+        leftSide = new VBox();
+        leftSide.setFillWidth(true);
+        leftSide.getStyleClass().add("leftSide");
+        leftSide.getChildren().addAll(mineLabel, clock, newGameButton);
+        leftSide.setAlignment(Pos.CENTER);
+        leftSide.setSpacing(20);
+        leftSide.setBackground(new Background(new BackgroundFill(Color.GRAY, new CornerRadii(5), null)));
+
         newGameButton.setOnAction(event -> {
             final Image newBackgroundImage = FlickProvider.getInstance().nextImage();
             final Scene scene = getScene();
@@ -86,12 +90,22 @@ public final class GameNode extends Region {
             offTransition.setToValue(0.5);
             setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(5), null)));
             offTransition.play();
+            final FadeTransition leftOffTransition = new FadeTransition(Duration.millis(750), leftSide);
+            leftOffTransition.setFromValue(1);
+            leftOffTransition.setToValue(0);
+            leftOffTransition.play();
+
 
             final GameNode newGame = new GameNode(minehuntService, newBackgroundImage);
             final FadeTransition inTransition = new FadeTransition(Duration.millis(1000), newGame.gridNode);
             newGame.gridNode.setOpacity(0);
             inTransition.setFromValue(0);
             inTransition.setToValue(1);
+
+            final FadeTransition leftInTransition = new FadeTransition(Duration.millis(1000), newGame.leftSide);
+            newGame.leftSide.setOpacity(0);
+            leftInTransition.setFromValue(0);
+            leftInTransition.setToValue(1);
 
             offTransition.setOnFinished(e -> {
                 newGame.setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(5), null)));
@@ -125,14 +139,18 @@ public final class GameNode extends Region {
                 }
 
                 inTransition.play();
+                leftInTransition.play();
             });
 
 
         });
-        toolbar.getItems().add(newGameButton);
+
 
         final BorderPane pane = new BorderPane();
-        pane.setLeft(toolbar);
+        final StackPane leftPane = new StackPane();
+        leftPane.getStyleClass().add("leftPane");
+        leftPane.getChildren().add(leftSide);
+        pane.setLeft(leftPane);
         pane.setCenter(gridNode);
 
         notificationPane = new NotificationPane();

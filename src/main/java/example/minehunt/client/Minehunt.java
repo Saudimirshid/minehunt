@@ -28,6 +28,7 @@ public final class Minehunt extends Application {
         final Image backgroundImage = FlickProvider.getInstance().nextImage();
 
         Scene scene = new Scene(new GameNode(minehuntService, backgroundImage));
+        scene.getStylesheets().add("minehunt.css");
         stage.setScene(scene);
 
         stage.setOnCloseRequest(windowEvent -> System.exit(0));
