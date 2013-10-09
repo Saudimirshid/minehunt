@@ -19,7 +19,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -37,6 +36,9 @@ import java.util.concurrent.Executors;
 public final class GameNode extends Region {
 
     private static final String GAME_ID = "gameId";
+
+    private static final Background DEFAULT_BACKGROUND = new Background(
+            new BackgroundFill(Color.BLACK.brighter(), null, null));
 
     static GameNode getCurrentGame(final Node node) {
         return (GameNode) node.getScene().lookup("#" + GAME_ID);
@@ -65,7 +67,6 @@ public final class GameNode extends Region {
                 .design(Clock.Design.DB)
                 .nightMode(true)
                 .build();
-        Platform.runLater(clock::start);
 
         final Button newGameButton = new Button("New Game");
         newGameButton.getStyleClass().add("button");
@@ -76,7 +77,7 @@ public final class GameNode extends Region {
         leftSide.getChildren().addAll(mineLabel, clock, newGameButton);
         leftSide.setAlignment(Pos.CENTER);
         leftSide.setSpacing(20);
-        leftSide.setBackground(new Background(new BackgroundFill(Color.GRAY, new CornerRadii(5), null)));
+        leftSide.setBackground(DEFAULT_BACKGROUND);
 
         newGameButton.setOnAction(event -> {
             final Image newBackgroundImage = FlickProvider.getInstance().nextImage();
@@ -88,7 +89,7 @@ public final class GameNode extends Region {
             final FadeTransition offTransition = new FadeTransition(Duration.millis(500), gridNode);
             offTransition.setFromValue(1);
             offTransition.setToValue(0.5);
-            setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(5), null)));
+            setBackground(DEFAULT_BACKGROUND);
             offTransition.play();
             final FadeTransition leftOffTransition = new FadeTransition(Duration.millis(750), leftSide);
             leftOffTransition.setFromValue(1);
@@ -108,7 +109,7 @@ public final class GameNode extends Region {
             leftInTransition.setToValue(1);
 
             offTransition.setOnFinished(e -> {
-                newGame.setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(5), null)));
+                newGame.setBackground(DEFAULT_BACKGROUND);
                 scene.setRoot(newGame);
 
                 if (widthDiff != 0 || heightDiff != 0) {
@@ -167,6 +168,14 @@ public final class GameNode extends Region {
 
     long stopClock() {
         return clock.stop();
+    }
+
+    void startClock() {
+        Platform.runLater(clock::start);
+    }
+
+    boolean isClockStarted() {
+        return clock.isStarted();
     }
 
 

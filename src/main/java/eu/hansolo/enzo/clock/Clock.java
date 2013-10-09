@@ -79,6 +79,10 @@ public class Clock extends Control {
         return System.currentTimeMillis() - start;
     }
 
+    public boolean isStarted() {
+        return start != 0;
+    }
+
     public long getStart() {
         return start;
     }

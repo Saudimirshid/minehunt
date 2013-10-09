@@ -71,10 +71,14 @@ public final class CellNode extends Parent {
         addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
                 final Cell selectedCell = grid.getGrid().getCell(position);
+                final GameNode game = getCurrentGame(this);
+                if (!game.isClockStarted()) {
+                    game.startClock();
+                }
+
                 final CellActionResult result = selectedCell.clearAround();
                 if (result.getOutcome() == Outcome.EXPLOSION) {
-                    getCurrentGame(this).displayMessage("You lose, Buddy, in "
-                            + formatDate(getCurrentGame(this).stopClock()) + " !!");
+                    game.displayMessage("You lose, Buddy, in " + formatDate(game.stopClock()) + " !!");
 
                 } else {
                     long millis = 100;
@@ -95,8 +99,7 @@ public final class CellNode extends Parent {
 
                     }
                     if (grid.getGrid().isGameWon()) {
-                        getCurrentGame(this).displayMessage("You win, Buddy, in "
-                                + formatDate(getCurrentGame(this).stopClock()) + " !!");
+                        game.displayMessage("You win, Buddy, in " + formatDate(game.stopClock()) + " !!");
                     }
 
                 }
