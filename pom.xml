@@ -18,7 +18,7 @@
         <dependency>
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
-            <version>8.40.18</version>
+            <version>11.1.0</version>
         </dependency>
         <dependency>
             <groupId>com.flickr4java</groupId>
